@@ -37,6 +37,14 @@ export class ApiError extends Error {
   }
 }
 
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    return error.message
+  }
+
+  return 'Nepodařilo se spojit se serverem'
+}
+
 export async function request<T>(
   path: string,
   options?: RequestInit,

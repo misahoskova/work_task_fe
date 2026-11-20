@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Figtree } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
 import { SiteHeader } from '@/components/site-header'
+import { Toaster } from '@/components/ui/sonner'
 
 const figtree = Figtree({
   variable: '--font-sans',
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         <SiteHeader />
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
           {children}
+          <Toaster richColors />
         </main>
       </body>
     </html>
