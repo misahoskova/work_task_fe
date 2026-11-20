@@ -97,28 +97,28 @@ export default function TeamDetailPage() {
         )}
       </section>
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>Smazat tým?</AlertDialogTitle>
-      <AlertDialogDescription>
-        Tým {team.name} bude trvale smazán.
-      </AlertDialogDescription>
-    </AlertDialogHeader>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Smazat tým?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tým {team.name} bude trvale smazán.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
 
-    {deleteError && <ErrorMessage message={deleteError} />}
+          {deleteError && <ErrorMessage message={deleteError} />}
 
-    <AlertDialogFooter>
-      <AlertDialogCancel disabled={deleting}>Zrušit</AlertDialogCancel>
-      <Button
-        variant="destructive"
-        onClick={handleDelete}
-        disabled={deleting}
-      >
-        {deleting ? 'Mažu…' : 'Smazat'}
-      </Button>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Zrušit</AlertDialogCancel>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? 'Mažu…' : 'Smazat'}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
