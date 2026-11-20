@@ -7,6 +7,7 @@ import { Loading } from '@/components/loading'
 import { getErrorMessage, getPersons } from '@/lib/api'
 import type { Person } from '@/lib/types'
 import { buttonVariants } from '@/components/ui/button'
+import { positionLabels } from '@/lib/labels'
 
 export default function PersonsPage() {
   const [persons, setPersons] = useState<Person[]>([])
@@ -24,7 +25,7 @@ export default function PersonsPage() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-semibold">Osoby</h1>
-        <Link href="/teams/new" className={buttonVariants()}>
+        <Link href="/persons/new" className={buttonVariants()}>
           Přidat novou osobu
         </Link>
       </div>
@@ -42,10 +43,13 @@ export default function PersonsPage() {
           {persons.map((person) => (
             <li key={person.id}>
               <Link
-                href={`/teams/${person.id}`}
-                className="hover:bg-muted block px-4 py-3"
+                href={`/persons/${person.id}`}
+                className="hover:bg-muted flex flex-wrap items-center justify-between gap-x-4 px-4 py-3"
               >
-                {`${person.name} ${person.surname}`}
+                <span>{`${person.name} ${person.surname}`}</span>
+                <span className="text-muted-foreground text-sm">
+                  {positionLabels[person.position]}
+                </span>
               </Link>
             </li>
           ))}

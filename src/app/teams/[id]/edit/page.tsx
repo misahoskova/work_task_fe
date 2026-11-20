@@ -41,7 +41,7 @@ export default function EditTeamPage() {
       <BackLink href={`/teams/${id}`} label="Detail týmu" />
       <h1 className="text-2xl font-semibold">Úprava týmu</h1>
       <TeamForm
-        initialName={team.name}
+        initial={{ name: team.name }}
         submitLabel="Uložit"
         onSubmit={handleUpdate}
       />

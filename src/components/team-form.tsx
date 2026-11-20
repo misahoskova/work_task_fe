@@ -9,17 +9,13 @@ import { TeamInput } from '@/lib/types'
 import { Input } from './ui/input'
 
 type TeamFormProps = {
-  initialName?: string
+  initial?: TeamInput
   submitLabel: string
   onSubmit: (data: TeamInput) => Promise<void>
 }
 
-export function TeamForm({
-  initialName = '',
-  submitLabel,
-  onSubmit,
-}: TeamFormProps) {
-  const [name, setName] = useState(initialName)
+export function TeamForm({ initial, submitLabel, onSubmit }: TeamFormProps) {
+  const [name, setName] = useState(initial?.name ?? '')
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
