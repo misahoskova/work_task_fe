@@ -7,6 +7,8 @@ import { Loading } from '@/components/loading'
 import { getErrorMessage, getProjects } from '@/lib/api'
 import type { Project } from '@/lib/types'
 import { buttonVariants } from '@/components/ui/button'
+import { formatDate } from '@/lib/format'
+import { projectStateLabels } from '@/lib/labels'
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
@@ -43,9 +45,14 @@ export default function ProjectsPage() {
             <li key={project.id}>
               <Link
                 href={`/projects/${project.id}`}
-                className="hover:bg-muted block px-4 py-3"
+                className="hover:bg-muted flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3"
               >
-                {project.name}
+                <span>{project.name}</span>
+                <span className="text-muted-foreground text-sm">
+                  {projectStateLabels[project.state]} &middot;{' '}
+                  {formatDate(project.startDate)}
+                  {project.endDate && `- ${formatDate(project.endDate)}`}
+                </span>
               </Link>
             </li>
           ))}
