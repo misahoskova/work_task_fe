@@ -2,7 +2,7 @@
 // Při změněn API opravit ručně.
 
 export type Position = 'developer' | 'analyst' | 'project_manager' | 'tester'
-export type ProjectState = 'Planned' | 'In_progess' | 'Done'
+export type ProjectState = 'Planned' | 'In_progress' | 'Done'
 
 export type Team = {
   id: number
@@ -32,6 +32,12 @@ export type Project = {
   endDate: string | null
 }
 
+/** Účastník projektu je k projektu přiřazen přímo (true) nebo přes tým (false). */
+
+export type Participant = Person & {
+  direct: boolean
+}
+
 export type TeamDetail = Team & {
   members: Person[]
 }
@@ -43,7 +49,7 @@ export type PersonDetail = Person & {
 
 export type ProjectDetail = Project & {
   teams: Team[]
-  participants: Person[]
+  participants: Participant[]
 }
 
 /**
