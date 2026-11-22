@@ -1,0 +1,14 @@
+include:
+  - ../work_task_be/docker-compose.yml
+
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3001
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - '3000:3000'
