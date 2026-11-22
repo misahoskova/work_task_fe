@@ -11,6 +11,6 @@ export const positionLabels: Record<Position, string> = {
 
 export const projectStateLabels: Record<ProjectState, string> = {
   Planned: 'Naplánováno',
-  In_progess: 'Probíhá',
+  In_progress: 'Probíhá',
   Done: 'Dokončeno',
 }
