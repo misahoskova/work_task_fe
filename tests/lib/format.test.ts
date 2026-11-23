@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatDate } from './format'
+import { formatDate } from '../../src/lib/format'
 
 describe('formatDate', () => {
   it('převede datum na text', () => {

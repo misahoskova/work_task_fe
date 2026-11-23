@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getTeams } from '@/lib/api'
-import { PersonForm } from './person-form'
+import { PersonForm } from '../../src/components/person-form'
 
 // Formulář si týmy načítá sám. V testu backend neběží, proto se getTeams
 // nahrazuje podvrženou funkcí.
