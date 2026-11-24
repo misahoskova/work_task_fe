@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { uniqueName } from './helpers'
+import { uniqueName, createTeam } from './helpers'
 
 test('tým lze vytvořit, upravit a smazat', async ({ page }) => {
   const teamName = uniqueName('Tým')
@@ -58,4 +58,15 @@ test('tým lze vytvořit, upravit a smazat', async ({ page }) => {
   await expect(
     page.getByRole('link', { name: editedName, exact: true }),
   ).toHaveCount(0)
+})
+
+test('název s HTML značkami se zobrazí jako text', async ({ page }) => {
+  const teamName = uniqueName('<b>Tučný</b> tým')
+
+  await createTeam(page, teamName)
+  await page.getByRole('link', { name: teamName, exact: true }).click()
+  await expect(
+    page.getByRole('heading', { level: 1, name: teamName, exact: true }),
+  ).toBeVisible()
+  await expect(page.locator('main b')).toHaveCount(0)
 })
