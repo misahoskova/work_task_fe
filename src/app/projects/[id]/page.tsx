@@ -49,9 +49,11 @@ export default function ProjectDetailPage() {
   const [version, setVersion] = useState(0)
 
   const [allTeams, setAllTeams] = useState<Team[]>([])
+  const [teamsLoaded, setTeamsLoaded] = useState(false)
   const [selectedTeamId, setSelectedTeamId] = useState('')
 
   const [allPersons, setAllPersons] = useState<Person[]>([])
+  const [personsLoaded, setPersonsLoaded] = useState(false)
   const [selectedPersonId, setSelectedPersonId] = useState('')
 
   async function handleDelete() {
@@ -129,13 +131,19 @@ export default function ProjectDetailPage() {
 
   useEffect(() => {
     getPersons()
-      .then((loaded) => setAllPersons(loaded))
+      .then((loaded) => {
+        setAllPersons(loaded)
+        setPersonsLoaded(true)
+      })
       .catch((error) => toast.error(getErrorMessage(error)))
   }, [])
 
   useEffect(() => {
     getTeams()
-      .then((loaded) => setAllTeams(loaded))
+      .then((loaded) => {
+        setAllTeams(loaded)
+        setTeamsLoaded(true)
+      })
       .catch((error) => toast.error(getErrorMessage(error)))
   }, [])
 
@@ -207,7 +215,7 @@ export default function ProjectDetailPage() {
             ))}
           </ul>
         )}
-        {availableTeams.length > 0 && (
+        {availableTeams.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             <NativeSelect
               aria-label="Tým k přiřazení"
@@ -226,7 +234,18 @@ export default function ProjectDetailPage() {
               Přidat tým
             </Button>
           </div>
-        )}
+        ) : teamsLoaded && allTeams.length === 0 ? (
+          <p className="text-muted-foreground text-sm">
+            Zatím neexistuje žádný tým.{' '}
+            <Link href="/teams/new" className="underline">
+              Založit tým
+            </Link>
+          </p>
+        ) : teamsLoaded ? (
+          <p className="text-muted-foreground text-sm">
+            Všechny týmy už jsou k projektu přiřazeny.
+          </p>
+        ) : null}
       </section>
 
       <section className="space-y-2">
@@ -296,11 +315,18 @@ export default function ProjectDetailPage() {
               Přidat osobu
             </Button>
           </div>
-        ) : (
+        ) : personsLoaded && allPersons.length === 0 ? (
+          <p className="text-muted-foreground text-sm">
+            Zatím neexistuje žádná osoba.{' '}
+            <Link href="/persons/new" className="underline">
+              Přidat osobu
+            </Link>
+          </p>
+        ) : personsLoaded ? (
           <p className="text-muted-foreground text-sm">
             Všechny osoby už jsou účastníky projektu.
           </p>
-        )}
+        ) : null}
       </section>
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>

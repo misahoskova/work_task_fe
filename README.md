@@ -136,7 +136,6 @@ V Dockeru se proto předává jako argument sestavení v `docker-compose.yml`.
 ```
 work_task_fe/
 ├── e2e/                    testy v prohlížeči (Playwright) a pomocné funkce
-├── public/                 statické soubory
 ├── src/
 │   ├── app/                stránky (App Router)
 │   │   ├── layout.tsx      společné rozvržení: hlavička, patička, hlášky
@@ -160,6 +159,19 @@ work_task_fe/
 ├── playwright.config.ts    konfigurace testů v prohlížeči
 └── vitest.config.mts       konfigurace testů funkcí a komponent
 ```
+
+### Komponenty
+
+| Soubor ve `src/components`                             | Účel                                                                        |
+| ------------------------------------------------------ | --------------------------------------------------------------------------- |
+| `site-header.tsx`                                      | hlavička aplikace s odkazem na úvodní stránku                               |
+| `site-footer.tsx`                                      | patička                                                                     |
+| `team-form.tsx`, `person-form.tsx`, `project-form.tsx` | formuláře společné pro založení i úpravu                                    |
+| `back-link.tsx`                                        | odkaz zpět na nadřazenou stránku                                            |
+| `error-message.tsx`                                    | chybová hláška                                                              |
+| `loading.tsx`                                          | stav načítání dat                                                           |
+| `native-select.tsx`                                    | výběr z možností ve vzhledu ostatních polí                                  |
+| `ui/`                                                  | komponenty shadcn/ui: tlačítko, pole, popisek, textové pole, dialog, hlášky |
 
 ## Technologie
 
