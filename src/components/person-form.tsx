@@ -9,6 +9,7 @@ import { PersonInput, Position, Team } from '@/lib/types'
 import { Input } from './ui/input'
 import { NativeSelect } from './native-select'
 import { positionLabels } from '@/lib/labels'
+import Link from 'next/link'
 
 type PersonFormProps = {
   initial?: PersonInput
@@ -29,12 +30,16 @@ export function PersonForm({
   )
   const [teamId, setTeamId] = useState(initial ? String(initial.teamId) : '')
   const [teams, setTeams] = useState<Team[]>([])
+  const [teamsLoaded, setTeamsLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     getTeams()
-      .then((loaded) => setTeams(loaded))
+      .then((loaded) => {
+        setTeams(loaded)
+        setTeamsLoaded(true)
+      })
       .catch((error) => setError(getErrorMessage(error)))
   }, [])
 
@@ -117,6 +122,14 @@ export function PersonForm({
             </option>
           ))}
         </NativeSelect>
+        {teamsLoaded && teams.length === 0 && (
+          <p className="text-muted-foreground text-sm">
+            Zatím neexistuje žádný tým.{' '}
+            <Link href="/teams/new" className="underline">
+              Založit tým
+            </Link>
+          </p>
+        )}
       </div>
 
       {error && <ErrorMessage message={error} />}
