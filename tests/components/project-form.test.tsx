@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { ProjectForm } from './project-form'
+import { ProjectForm } from '../../src/components/project-form'
 
 describe('ProjectForm', () => {
   it('odešle všechna vyplněná pole', async () => {

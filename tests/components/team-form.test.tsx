@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { ApiError } from '@/lib/api'
-import { TeamForm } from './team-form'
+import { TeamForm } from '../../src/components/team-form'
 
 describe('TeamForm', () => {
   it('odešle vyplněný název', async () => {
