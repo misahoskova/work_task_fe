@@ -1,36 +1,220 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Evidence projektů a členů týmů – frontend
 
-## Getting Started
+Webové rozhraní aplikace pro evidenci projektů, osob a týmů. Postavené v Next.js, data čte a zapisuje přes REST API backendu.
 
-First, run the development server:
+Backend je v samostatném repozitáři: [work_task_be](https://github.com/misahoskova/work_task_be).
+
+## Popis aplikace
+
+Aplikace eviduje projekty, osoby a týmy a vazby mezi nimi.
+
+- **Projekty:** název, popis, stav (naplánováno, probíhá, dokončeno), datum zahájení a volitelně datum ukončení.
+- **Osoby:** jméno, příjmení, e-mail, pozice a tým. Každá osoba patří právě do jednoho týmu.
+- **Týmy:** název a seznam členů.
+
+Funkce:
+
+- seznam a detail projektů, osob a týmů,
+- přidání, úprava a smazání projektu, osoby a týmu,
+- přiřazení osoby nebo celého týmu k projektu a jejich odebrání,
+- přehled všech účastníků na detailu projektu, tedy osob přiřazených přímo i členů přiřazených týmů. U každého účastníka je vidět, jakou cestou se k projektu dostal.
+
+Rozhraní je česky a je responzivní, takže se dá používat na počítači i na telefonu. Výsledek každé akce potvrzuje krátká hláška, mazání se potvrzuje v dialogu.
+
+**Součástí projektu není přihlašovací logika, protože ji zadání výslovně nevyžadovalo.**
+
+## Architektura
+
+- **Stránky** jsou v `src/app` a používají App Router. Každá entita má čtyři stránky: seznam, detail, formulář pro založení a formulář pro úpravu.
+- **Data se načítají v prohlížeči.** Stránky jsou klientské komponenty a volají backend přímo přes `fetch` na adresu z proměnné `NEXT_PUBLIC_API_URL`. Backend proto musí povolit požadavky z adresy frontendu (CORS). Výchozí nastavení backendu to pro `http://localhost:3000` dělá.
+- **Volání API** jsou na jednom místě v `src/lib/api.ts`. Soubor obsahuje funkci pro každou operaci backendu a třídu `ApiError`, která nese stavový kód, kód chyby a podrobnosti z odpovědi. Stránky a formuláře z ní skládají chybové hlášky.
+- **Typy** dat z backendu jsou v `src/lib/types.ts`, české popisky pozic a stavů v `src/lib/labels.ts`.
+- **Formuláře** (`team-form.tsx`, `person-form.tsx`, `project-form.tsx`) jsou společné pro založení i úpravu. Stránka jim předá výchozí hodnoty, text tlačítka a funkci, která data odešle.
+- **Vzhled** je postavený na Tailwind CSS a komponentách shadcn/ui ve složce `src/components/ui`.
+
+| Adresa                | Stránka                       |
+| --------------------- | ----------------------------- |
+| `/`                   | úvodní stránka s rozcestníkem |
+| `/projects`           | seznam projektů               |
+| `/projects/new`       | nový projekt                  |
+| `/projects/[id]`      | detail projektu a účastníci   |
+| `/projects/[id]/edit` | úprava projektu               |
+| `/persons`            | seznam osob                   |
+| `/persons/new`        | nová osoba                    |
+| `/persons/[id]`       | detail osoby                  |
+| `/persons/[id]/edit`  | úprava osoby                  |
+| `/teams`              | seznam týmů                   |
+| `/teams/new`          | nový tým                      |
+| `/teams/[id]`         | detail týmu a členové         |
+| `/teams/[id]/edit`    | úprava týmu                   |
+
+## Spuštění
+
+Celá aplikace se spouští v Dockeru jedním příkazem z tohoto repozitáře.
+Frontend a backend běží v samostatných kontejnerech.
+
+Potřeba je [Docker](https://docs.docker.com/get-docker/) s Docker Compose.
+
+Oba repozitáře musí být ve stejné složce vedle sebe, protože `docker-compose.yml` frontendu načítá konfiguraci backendu z `../work_task_be`:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/misahoskova/work_task_be.git
+git clone https://github.com/misahoskova/work_task_fe.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+V repozitáři backendu je potřeba vytvořit soubor `.env` podle návodu v jeho README:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cd work_task_be
+cp .env.example .env
+cd ..
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Potom stačí spustit:
 
-## Learn More
+```bash
+cd work_task_fe
+docker compose up -d --build
+```
 
-To learn more about Next.js, take a look at the following resources:
+Spustí se čtyři služby: databáze, backend, pgAdmin a frontend. Frontend čeká, až je backend připravený.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Služba            | Adresa                     |
+| ----------------- | -------------------------- |
+| Frontend          | http://localhost:3000      |
+| Backend (API)     | http://localhost:3001      |
+| Dokumentace k API | http://localhost:3001/docs |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Zastavení:
 
-## Deploy on Vercel
+```bash
+docker compose down
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+S přepínačem `-v` se smaže i databáze.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Spuštění z tohoto repozitáře a spuštění samotného backendu z `work_task_be` jsou pro Docker dva různé projekty a každý má vlastní databázi.
+Data vytvořená v jednom se ve druhém neobjeví.
+
+## Lokální vývoj
+
+Pro vývoj frontendu bez Dockeru je potřeba Node.js 24 a běžící backend na adrese z `NEXT_PUBLIC_API_URL`.
+Backend jde spustit příkazem `docker compose up -d` v repozitáři `work_task_be`.
+
+```bash
+cp .env.example .env
+npm install
+npm run dev
+```
+
+Aplikace běží na http://localhost:3000.
+Ve stejnou chvíli nesmí běžet kontejner frontendu z předchozí sekce, protože používá stejný port.
+
+Soubor `.env` obsahuje jedinou proměnnou:
+
+| Proměnná              | Výchozí hodnota         | Význam          |
+| --------------------- | ----------------------- | --------------- |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:3001` | adresa backendu |
+
+Hodnota se do aplikace vkládá při sestavení.
+V Dockeru se proto předává jako argument sestavení v `docker-compose.yml`.
+
+| Příkaz                 | Co dělá                     |
+| ---------------------- | --------------------------- |
+| `npm run dev`          | vývojový server             |
+| `npm run build`        | produkční sestavení         |
+| `npm start`            | spuštění sestavené aplikace |
+| `npm run format`       | formátování přes Prettier   |
+| `npm run format:check` | kontrola formátování        |
+| `npm run lint`         | kontrola kódu přes Oxlint   |
+| `npm run typecheck`    | kontrola typů               |
+| `npm test`             | testy funkcí a komponent    |
+| `npm run test:e2e`     | testy v prohlížeči          |
+
+## Struktura projektu
+
+```
+work_task_fe/
+├── e2e/                    testy v prohlížeči (Playwright) a pomocné funkce
+├── public/                 statické soubory
+├── src/
+│   ├── app/                stránky (App Router)
+│   │   ├── layout.tsx      společné rozvržení: hlavička, patička, hlášky
+│   │   ├── page.tsx        úvodní stránka
+│   │   ├── not-found.tsx   stránka pro neexistující adresu
+│   │   ├── projects/       seznam, detail, nový projekt, úprava
+│   │   ├── persons/        seznam, detail, nová osoba, úprava
+│   │   └── teams/          seznam, detail, nový tým, úprava
+│   ├── components/         formuláře a sdílené komponenty
+│   │   └── ui/             komponenty shadcn/ui
+│   └── lib/
+│       ├── api.ts          volání REST API a zpracování chyb
+│       ├── types.ts        typy dat z backendu
+│       ├── labels.ts       české popisky pozic a stavů
+│       ├── format.ts       formátování data
+│       └── utils.ts        pomocná funkce pro skládání tříd
+├── tests/                  testy funkcí a komponent (Vitest)
+├── Dockerfile              obraz frontendu
+├── docker-compose.yml      spuštění celé aplikace včetně backendu
+├── next.config.ts          konfigurace Next.js a bezpečnostní hlavičky
+├── playwright.config.ts    konfigurace testů v prohlížeči
+└── vitest.config.mts       konfigurace testů funkcí a komponent
+```
+
+## Technologie
+
+- [Next.js](https://nextjs.org/) 16 (App Router, Turbopack) a [React](https://react.dev/) 19
+- [TypeScript](https://www.typescriptlang.org/) 5
+- [Tailwind CSS](https://tailwindcss.com/) 4 a [shadcn/ui](https://ui.shadcn.com/)
+- [Sonner](https://sonner.emilkowal.ski/) pro hlášky
+- [Vitest](https://vitest.dev/) a [React Testing Library](https://testing-library.com/) pro testy funkcí a komponent
+- [Playwright](https://playwright.dev/) pro testy v prohlížeči
+- [Oxlint](https://oxc.rs/docs/guide/usage/linter) a [Prettier](https://prettier.io/)
+- Docker a Docker Compose
+- GitHub Actions
+
+## Testy
+
+### Testy funkcí a komponent
+
+```bash
+npm test
+```
+
+Běží ve Vitestu v prostředí jsdom, bez backendu.
+Ve složce `tests/lib` jsou testy formátování data a zpracování chyb, ve složce `tests/components` testy všech tří formulářů.
+
+### Testy v prohlížeči
+
+Procházejí celou aplikaci včetně backendu a databáze, ve třech prohlížečích: Chromium, Firefox a WebKit.
+Před spuštěním musí běžet aplikace v Dockeru podle sekce [Spuštění](#spuštění).
+
+```bash
+npx playwright install
+npm run test:e2e
+```
+
+První příkaz stáhne prohlížeče a stačí ho spustit jednou.
+
+Přehled testů
+
+- založení, úprava a smazání týmu,
+- zobrazení nové osoby na detailu jejího týmu a odmítnutí smazat tým se členy,
+- přiřazení týmu a osoby k projektu, rozlišení účastníků přiřazených přímo a přes tým a jejich odebrání,
+- zobrazení názvu s HTML značkami jako textu.
+
+Testy zapisují do databáze běžící aplikace.
+Každý si zakládá vlastní data s jedinečnou příponou v názvu, takže se navzájem neovlivňují a jdou spouštět opakovaně.
+Část těchto dat po doběhnutí v databázi zůstane.
+
+## Zabezpečení
+
+- **Bezpečnostní hlavičky.** `next.config.ts` přidává ke každé odpovědi hlavičky `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` a `Permissions-Policy` a vypíná hlavičku `X-Powered-By`.
+- **Zobrazení dat.** Hodnoty z backendu se do stránky vkládají jako text, ne jako HTML. Ověřuje to test v prohlížeči s názvem obsahujícím HTML značky.
+- **Validace vstupů.** Formuláře kontrolují povinná pole, délku a tvar e-mailu už v prohlížeči. Rozhodující validace je na backendu, jeho chybové odpovědi se zobrazují u formuláře.
+- **Přihlašování.** Aplikace nemá přihlašování ani uživatelské role. Kdokoli s přístupem k adrese může data číst i měnit.
+
+## CI
+
+Při každém pull requestu spustí GitHub Actions kontrolu formátování, lint, testy funkcí a komponent, sestavení a kontrolu typů.
+Testy v prohlížeči v CI neběží, protože potřebují spuštěný backend s databází.
