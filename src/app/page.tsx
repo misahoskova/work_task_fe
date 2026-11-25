@@ -14,7 +14,7 @@ const section = [
   {
     href: '/teams',
     title: 'Týmy',
-    text: 'Přehled týmů a jejcih členů.',
+    text: 'Přehled týmů a jejich členů.',
   },
 ]
 

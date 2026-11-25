@@ -71,7 +71,7 @@ export default function ProjectDetailPage() {
   }
 
   function reload() {
-    setVersion((currenct) => currenct + 1)
+    setVersion((current) => current + 1)
   }
 
   async function handleRemoveTeam(teamId: number) {
@@ -177,7 +177,9 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
-      {project.description && <p>{project.description}</p>}
+      {project.description && (
+        <p className="whitespace-pre-line">{project.description}</p>
+      )}
 
       <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-[max-content_1fr]">
         <dt className="text-muted-foreground">Stav</dt>

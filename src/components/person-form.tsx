@@ -4,12 +4,18 @@ import { useState, type SubmitEvent, useEffect } from 'react'
 import { ErrorMessage } from './error-message'
 import { Button } from './ui/button'
 import { Label } from './ui/label'
-import { getErrorMessage, getTeams } from '@/lib/api'
+import {
+  ErrorDetail,
+  getErrorDetails,
+  getErrorMessage,
+  getTeams,
+} from '@/lib/api'
 import { PersonInput, Position, Team } from '@/lib/types'
 import { Input } from './ui/input'
 import { NativeSelect } from './native-select'
 import { positionLabels } from '@/lib/labels'
 import Link from 'next/link'
+import { FieldErrors } from './field-errors'
 
 type PersonFormProps = {
   initial?: PersonInput
@@ -33,6 +39,7 @@ export function PersonForm({
   const [teamsLoaded, setTeamsLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [details, setDetails] = useState<ErrorDetail[]>([])
 
   useEffect(() => {
     getTeams()
@@ -47,11 +54,13 @@ export function PersonForm({
     event.preventDefault()
     setSaving(true)
     setError(null)
+    setDetails([])
 
     try {
       await onSubmit({ name, surname, email, position, teamId: Number(teamId) })
     } catch (error) {
       setError(getErrorMessage(error))
+      setDetails(getErrorDetails(error))
       setSaving(false)
     }
   }
@@ -66,6 +75,8 @@ export function PersonForm({
           onChange={(event) => setName(event.target.value)}
           required
           maxLength={200}
+          pattern=".*\S.*"
+          title="Pole nesmí obsahovat jen mezery"
         />
       </div>
       <div className="space-y-2">
@@ -76,6 +87,8 @@ export function PersonForm({
           onChange={(event) => setSurname(event.target.value)}
           required
           maxLength={200}
+          pattern=".*\S.*"
+          title="Pole nesmí obsahovat jen mezery"
         />
       </div>
       <div className="space-y-2">
@@ -87,6 +100,8 @@ export function PersonForm({
           onChange={(event) => setEmail(event.target.value)}
           required
           maxLength={200}
+          pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+          title="E-mail musí mít doménu s koncovkou, například jana.novakova@example.cz"
         />
       </div>
 
@@ -133,6 +148,16 @@ export function PersonForm({
       </div>
 
       {error && <ErrorMessage message={error} />}
+      <FieldErrors
+        details={details}
+        labels={{
+          name: 'Jméno',
+          surname: 'Příjmení',
+          email: 'Email',
+          position: 'Pozice',
+          teamId: 'Tým',
+        }}
+      />
 
       <Button type="submit" disabled={saving}>
         {saving ? 'Ukládám…' : submitLabel}

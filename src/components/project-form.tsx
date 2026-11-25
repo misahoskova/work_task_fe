@@ -4,13 +4,14 @@ import { useState, type SubmitEvent } from 'react'
 import { ErrorMessage } from './error-message'
 import { Button } from './ui/button'
 import { Label } from './ui/label'
-import { getErrorMessage } from '@/lib/api'
+import { ErrorDetail, getErrorDetails, getErrorMessage } from '@/lib/api'
 import { ProjectInput } from '@/lib/types'
 import { Input } from './ui/input'
 import { projectStateLabels } from '@/lib/labels'
 import { ProjectState } from '@/lib/types'
 import { NativeSelect } from './native-select'
 import { Textarea } from './ui/textarea'
+import { FieldErrors } from './field-errors'
 
 type ProjectFormProps = {
   initial?: ProjectInput
@@ -30,11 +31,13 @@ export function ProjectForm({
   const [description, setDescription] = useState(initial?.description ?? '')
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [details, setDetails] = useState<ErrorDetail[]>([])
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     setSaving(true)
     setError(null)
+    setDetails([])
 
     try {
       await onSubmit({
@@ -46,6 +49,7 @@ export function ProjectForm({
       })
     } catch (error) {
       setError(getErrorMessage(error))
+      setDetails(getErrorDetails(error))
       setSaving(false)
     }
   }
@@ -60,6 +64,8 @@ export function ProjectForm({
           onChange={(event) => setName(event.target.value)}
           required
           maxLength={200}
+          pattern=".*\S.*"
+          title="Pole nesmí obsahovat jen mezery"
         />
       </div>
       <div className="space-y-2">
@@ -68,6 +74,7 @@ export function ProjectForm({
           id="description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
+          maxLength={2000}
         />
       </div>
       <div className="space-y-2">
@@ -106,6 +113,16 @@ export function ProjectForm({
       </div>
 
       {error && <ErrorMessage message={error} />}
+      <FieldErrors
+        details={details}
+        labels={{
+          name: 'Název',
+          description: 'Popis',
+          state: 'Stav',
+          startDate: 'Počáteční datum',
+          endDate: 'Konečné datum',
+        }}
+      />
 
       <Button type="submit" disabled={saving}>
         {saving ? 'Ukládám...' : submitLabel}

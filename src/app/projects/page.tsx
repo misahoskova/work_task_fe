@@ -51,7 +51,7 @@ export default function ProjectsPage() {
                 <span className="text-muted-foreground text-sm">
                   {projectStateLabels[project.state]} &middot;{' '}
                   {formatDate(project.startDate)}
-                  {project.endDate && `- ${formatDate(project.endDate)}`}
+                  {project.endDate && ` – ${formatDate(project.endDate)}`}
                 </span>
               </Link>
             </li>
