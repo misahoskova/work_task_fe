@@ -12,6 +12,11 @@ import type {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
+export type ErrorDetail = {
+  path: string
+  message: string
+}
+
 export class ApiError extends Error {
   status: number
   code: string
@@ -43,6 +48,14 @@ export function getErrorMessage(error: unknown): string {
   }
 
   return 'Nepodařilo se spojit se serverem'
+}
+
+export function getErrorDetails(error: unknown): ErrorDetail[] {
+  if (error instanceof ApiError && error.details != null) {
+    return error.details
+  }
+
+  return []
 }
 
 export async function request<T>(

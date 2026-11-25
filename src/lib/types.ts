@@ -1,5 +1,5 @@
 // Typy odpovídají backendu.
-// Při změněn API opravit ručně.
+// Při změně API opravit ručně.
 
 export type Position = 'developer' | 'analyst' | 'project_manager' | 'tester'
 export type ProjectState = 'Planned' | 'In_progress' | 'Done'

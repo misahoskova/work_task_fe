@@ -50,4 +50,24 @@ describe('TeamForm', () => {
 
     expect(screen.getByRole('button', { name: /Ukládám/ })).toBeDisabled()
   })
+  it('zobrazí podrobnosti validační chyby s popiskem pole', async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi
+      .fn()
+      .mockRejectedValue(
+        new ApiError(400, 'validation_error', 'Neplatný vstup', [
+          { path: 'name', message: 'Hodnota je příliš malá' },
+        ]),
+      )
+
+    render(<TeamForm submitLabel="Vytvořit" onSubmit={onSubmit} />)
+
+    await user.type(screen.getByLabelText('Název'), 'Alpha')
+    await user.click(screen.getByRole('button', { name: 'Vytvořit' }))
+
+    expect(await screen.findByText('Neplatný vstup')).toBeInTheDocument()
+    expect(
+      screen.getByText('Název: Hodnota je příliš malá'),
+    ).toBeInTheDocument()
+  })
 })
